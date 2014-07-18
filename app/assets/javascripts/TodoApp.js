@@ -1,11 +1,11 @@
 var TodoApp = {
   initialize: function(){
-    $('#task-form' ).submit(this.addTask);
+    $('#task-form' ).submit(this.createTask);
   },
-  addTask: function(event){
+  createTask: function(event){
     var task = $('#task-field').val();
     if(task !== ''){
-      var newTask = $('<li>').text(task);
+      var newTask = TodoItem(task);
       $('#tasks-list').append(newTask);
       $('#task-field').val('');
     }
