@@ -14,6 +14,7 @@ var TodoApp = {
       i = $( "#tasks-list li" ).index($('#tasks-list li').last());
 
       $( "#tasks-list li" ).last().attr('data-id',i);
+
       $('#task-field').val('');
     }
     event.preventDefault();
@@ -24,6 +25,8 @@ var TodoApp = {
   },
   doneTask: function(event){
     var finished_task = $( this.parentElement ).detach();
+    //Add completed date.
+    finished_task.attr('completed-at',TodoItem.prototype.createdAt);
     $('#finished-list').append(finished_task);
     event.preventDefault();
   }
