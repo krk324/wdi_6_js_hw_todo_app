@@ -1,32 +1,54 @@
 var TodoApp = {
+
+  tasks: [],
+
   initialize: function(){
-    $('#task-form').submit(this.createTask);
-    $('#tasks-list').on('click', '#delete-button',this.deleteTask);
-    $('#tasks-list').on('click', '#done-button',this.doneTask);
-    $('#finished-list').on('click', '#delete-button',this.deleteTask);
+    $('#task-form').on('submit',$.proxy(this.createTask, this));
+    $('#tasks-list').on('click', '#delete-button',$.proxy(this.deleteTask,this));
+    $('#tasks-list').on('click', '#done-button',$.proxy(this.doneTask, this));
+    $('#finished-list').on('click', '#delete-button',$.proxy(this.deleteTask,this));
 
   },
   createTask: function(event){
     var task = $('#task-field').val();
     if(task !== ''){
-      var newTask = TodoItem(task);
-      $('#tasks-list').append(newTask);
+      var newTask = new TodoItem(task);
+      this.tasks.push(newTask);
+      this.updateTasks();
       $('#task-field').val('');
     }
     event.preventDefault();
   },
+
   deleteTask: function(event){
-    $( this.parentElement ).remove();
+    task = this.getTask(event);
+    this.tasks = this.tasks.filter(function(obj) {return obj.id !== task.id;});
+    this.updateTasks();
     event.preventDefault();
   },
+
   doneTask: function(event){
-    var finished_task = $( this.parentElement ).detach();
-    //Add completed date.
-    finished_task.attr('completed-at',TodoItem.prototype.createdAt);
-    $('#finished-list').append(finished_task);
+    task = this.getTask(event);
+    task.markCompleted();
+    this.updateTasks();
     event.preventDefault();
   },
-  sortAlphabatical: function(event){
-    $('#task-menu li').each();
-    }
+
+  getTask: function(event){
+    id = $(event.target).parent().data('id');
+    return $.grep(this.tasks,function(task){return task.id === id})[0];
+  },
+
+  updateTasks: function(event){
+    $('#tasks-list').empty();
+    $('#finished-list').empty();
+
+    this.tasks.forEach(function(task){
+      if(task.completedAt !== null) {
+        $('#finished-list').append(task.html());
+      } else {
+        $('#tasks-list').append(task.html());
+      }
+    });
+  }
 };
